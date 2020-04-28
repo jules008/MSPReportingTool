@@ -22,3 +22,19 @@ Public Const IMPORT_FILE_PATH As String = "G:\MSPReportingTool\"
 Public Const VERSION = "V0.0.0"
 Public Const VER_DATE = "28 Apr 20"
 
+' ===============================================================
+' Enums
+' ---------------------------------------------------------------
+Enum enDataCols
+    enRef = 1
+    enLevel
+    enMileName
+    enBaseFinish
+    enForeFinish
+    enDTI
+    enLastRAG
+    enRAG
+    enIssue
+    enImpact
+    enAction
+End Enum

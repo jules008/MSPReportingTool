@@ -75,22 +75,25 @@ Private Sub ImportData(ProjectPath As String)
     End With
     
     'cycle through tasks in plan and add to tasks array
-    ReDim AryTasks(ObjMSProject.ActiveProject.Tasks.Count, 7)
+    ReDim AryTasks(ObjMSProject.ActiveProject.Tasks.Count, 11)
     
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
         If Not Tsk Is Nothing And Tsk.Summary = False Then
-            AryTasks(Tsk.ID, 1) = Tsk.ID
-            AryTasks(Tsk.ID, 2) = Tsk.Name
-            AryTasks(Tsk.ID, 3) = DurationFormat(Tsk.Duration, pjDays)
-            AryTasks(Tsk.ID, 4) = Format(Tsk.BaselineFinish, "dd mmm yy")
-            AryTasks(Tsk.ID, 5) = Format(Tsk.ActualFinish, "dd mmm yy")
-            AryTasks(Tsk.ID, 6) = Tsk.Summary
-            AryTasks(Tsk.ID, 7) = Format(Tsk.ScheduledFinish, "dd mmm yy")
+            AryTasks(Tsk.ID, enRef) = Tsk.Text1
+            AryTasks(Tsk.ID, enLevel) = Tsk.Number1
+            AryTasks(Tsk.ID, enMileName) = Tsk.Name
+            AryTasks(Tsk.ID, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
+            AryTasks(Tsk.ID, enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
+            AryTasks(Tsk.ID, enDTI) = "DTI"
+            AryTasks(Tsk.ID, enLastRAG) = Tsk.Text21
+            AryTasks(Tsk.ID, enRAG) = Tsk.Text22
+            AryTasks(Tsk.ID, enIssue) = Tsk.Text14
+            AryTasks(Tsk.ID, enImpact) = Tsk.Text15
+            AryTasks(Tsk.ID, enAction) = Tsk.Text16
         End If
         
         If Not Tsk Is Nothing And Tsk.Summary = True Then
-            AryTasks(Tsk.ID, 2) = Tsk.Name
-            AryTasks(Tsk.ID, 6) = Tsk.Summary
+            AryTasks(Tsk.ID, enMileName) = Tsk.Name
         End If
     Next Tsk
     
@@ -106,6 +109,7 @@ Private Sub ImportData(ProjectPath As String)
 Exit Sub
 
 ErrorHandler:
+    Debug.Print Err.Number & " - " & Err.Description
     ModLibrary.PerfSettingsOff
     ObjMSProject.FileClose (False)
     Set ObjMSProject = Nothing

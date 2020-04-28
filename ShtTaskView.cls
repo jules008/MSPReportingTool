@@ -36,13 +36,18 @@ Public Sub DisplayTasks(AryTasks() As String)
         Next y
     Next x
     
-    Range("C2") = "ID"
-    Range("D2") = "Name"
-    Range("E2") = "Duration"
-    Range("F2") = "Baseline End"
-    Range("G2") = "Actual End"
-    Range("H2") = "Summary"
-    Range("I2") = "Scheduled End"
-    Range("A:I").Columns.AutoFit
-    Columns("H").Hidden = True
+    Range("C2") = "Ref"
+    Range("D2") = "Level"
+    Range("E2") = "Milestone Name"
+    Range("F2") = "Baseline Finish"
+    Range("G2") = "Forecast Finish"
+    Range("H2") = "DTI"
+    Range("I2") = "Last RAG"
+    Range("J2") = "RAG"
+    Range("K2") = "Issue"
+    Range("L2") = "Impact"
+    Range("M2") = "Action"
+    
+    Range("A:M").Columns.AutoFit
+'    Columns("H").Hidden = True
 End Sub
