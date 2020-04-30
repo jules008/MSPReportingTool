@@ -28,7 +28,7 @@ Public Sub DisplayTasks(AryTasks() As String)
     Dim x As Integer
     Dim y As Integer
     
-    Range("A1:AA1000").ClearContents
+    Range("A1:AA10000").ClearContents
     
     For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
         For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)

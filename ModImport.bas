@@ -31,22 +31,24 @@ Public Sub SelectMPP()
         .InitialFileName = Application.DefaultFilePath
         
         If .Show <> -1 Then Exit Sub
-        FilePath = .SelectedItems(1)
+        [MPP_FILEPATH] = .SelectedItems(1)
     End With
-    ImportData FilePath
 End Sub
 
 ' ===============================================================
-' ImportData
+' LookAheadRep
 ' Opens project file from passed filepath, extracts data and sends
 ' to display procedure
 ' ---------------------------------------------------------------
-Private Sub ImportData(ProjectPath As String)
+Public Sub LookAheadRep(ProjectPath As String)
     Dim ObjMSProject As Object
     Dim ProgName As String
     Dim ProjName As String
     Dim AryTasks() As String
+    Dim PLevel As Integer
+    Dim LookAhead As Integer
     Dim Tsk As Task
+    Dim i As Integer
     
     On Error GoTo ErrorHandler:
     
@@ -74,26 +76,33 @@ Private Sub ImportData(ProjectPath As String)
         ProjName = .ActiveProject.BuiltinDocumentProperties("Company")
     End With
     
+    LookAhead = Shtmain.Range("LA_PERIOD")
+    PLevel = Shtmain.Range("LEVEL")
+    
     'cycle through tasks in plan and add to tasks array
     ReDim AryTasks(ObjMSProject.ActiveProject.Tasks.Count, 11)
     
+    i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
         If Not Tsk Is Nothing And Tsk.Summary = False Then
-            AryTasks(Tsk.ID, enRef) = Tsk.Text1
-            AryTasks(Tsk.ID, enLevel) = Tsk.Number1
-            AryTasks(Tsk.ID, enMileName) = Tsk.Name
-            AryTasks(Tsk.ID, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
-            AryTasks(Tsk.ID, enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
-            AryTasks(Tsk.ID, enDTI) = "DTI"
-            AryTasks(Tsk.ID, enLastRAG) = Tsk.Text21
-            AryTasks(Tsk.ID, enRAG) = Tsk.Text22
-            AryTasks(Tsk.ID, enIssue) = Tsk.Text14
-            AryTasks(Tsk.ID, enImpact) = Tsk.Text15
-            AryTasks(Tsk.ID, enAction) = Tsk.Text16
+            If Tsk.Number1 <= PLevel and tsk.baselinefinish < dateadd(  Then
+                AryTasks(i, enRef) = Tsk.Text1
+                AryTasks(i, enLevel) = Tsk.Number1
+                AryTasks(i, enMileName) = Tsk.Name
+                AryTasks(i, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
+                AryTasks(i, enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
+                AryTasks(i, enDTI) = Tsk.Number13
+                AryTasks(i, enRAG) = Tsk.Text22
+                AryTasks(i, enIssue) = Tsk.Text14
+                AryTasks(i, enImpact) = Tsk.Text15
+                AryTasks(i, enAction) = Tsk.Text16
+                i = i + 1
+            End If
         End If
         
         If Not Tsk Is Nothing And Tsk.Summary = True Then
             AryTasks(Tsk.ID, enMileName) = Tsk.Name
+            i = i + 1
         End If
     Next Tsk
     

@@ -41,3 +41,16 @@ Public Sub PerfSettingsOff()
     Application.Calculation = xlCalculationAutomatic
     Application.EnableEvents = True
 End Sub
+
+' ===============================================================
+' ColourConvert
+' Converts RGB colour to long
+' ---------------------------------------------------------------
+
+Public Sub ColourConvert(R As Integer, A As Integer, G As Integer)
+     Dim Colour1 As Long
+     Colour1 = RGB(R, A, G)
+     
+     Debug.Print Colour1
+
+End Sub

@@ -131,105 +131,6 @@ Public Sub RemoveAllModules()
 End Sub
 
 ' ===============================================================
-' ExportDBTables
-' Exports DB tables from database
-' ---------------------------------------------------------------
-Public Sub ExportDBTables()
-    Dim iFile As Integer
-    Dim Fld As Field
-    Dim FieldType As String
-    Dim TableExport As TableDef
-    Dim ExportFldr As String
-    
-    On Error Resume Next
-    
-    Set DB = OpenDatabase("G:\Development Areas\CDC Tracker\System Files\TrainingDB.accdb")
-    
-    For Each TableExport In DB.TableDefs
-        If Not (TableExport.Name Like "MSys*" Or TableExport.Name Like "~*") Then
-            
-            Debug.Print TableExport.Name
-            
-            ExportFldr = EXPORT_FILE_PATH & TableExport.Name & ".txt"
-        
-            iFile = FreeFile()
-            
-            Open ExportFldr For Append As #iFile
-            
-            For Each Fld In TableExport.Fields
-                Select Case Fld.Type
-                    Case Is = 1
-                        FieldType = "dbBoolean"
-                    Case Is = 2
-                        FieldType = "dbByte"
-                    Case Is = 3
-                        FieldType = "dbInteger"
-                    Case Is = 4
-                        FieldType = "dbLong"
-                    Case Is = 5
-                        FieldType = "dbCurrency"
-                    Case Is = 6
-                        FieldType = "dbSingle"
-                    Case Is = 7
-                        FieldType = "dbDouble"
-                    Case Is = 8
-                        FieldType = "dbDate"
-                    Case Is = 9
-                        FieldType = "dbBinary"
-                    Case Is = 10
-                        FieldType = "dbText"
-                    Case Is = 11
-                        FieldType = "dbLongBinary"
-                    Case Is = 12
-                        FieldType = "dbMemo"
-                    Case Is = 15
-                        FieldType = "dbGUID"
-                    Case Is = 16
-                        FieldType = "dbBigInt"
-                    Case Is = 17
-                        FieldType = "dbVarBinary"
-                    Case Is = 18
-                        FieldType = "dbChar"
-                    Case Is = 19
-                        FieldType = "dbNumeric"
-                    Case Is = 20
-                        FieldType = "dbDecimal"
-                    Case Is = 21
-                        FieldType = "dbFloat"
-                    Case Is = 22
-                        FieldType = "dbTime"
-                    Case Is = 23
-                        FieldType = "dbTimeStamp"
-                    Case Is = 101
-                        FieldType = "dbAttachment"
-                    Case Is = 102
-                        FieldType = "dbComplexByte"
-                    Case Is = 103
-                        FieldType = "dbComplexInteger"
-                    Case Is = 104
-                        FieldType = "dbComplexLong"
-                    Case Is = 105
-                        FieldType = "dbComplexSingle"
-                    Case Is = 106
-                        FieldType = "dbComplexDouble"
-                    Case Is = 107
-                        FieldType = "dbComplexGUID"
-                    Case Is = 108
-                        FieldType = "dbComplexDecimal"
-                    Case Is = 109
-                        FieldType = "dbComplexText"
-                End Select
-                
-                Print #iFile, Fld.Name & ",  " & FieldType
-            
-            Next
-                    
-            Close #iFile
-        End If
-    Next
-End Sub
-
-' ===============================================================
 ' SetReferenceLibs
 ' Sets all project reference libraries
 ' ---------------------------------------------------------------
@@ -240,12 +141,12 @@ Public Sub SetReferenceLibs()
     
     For Each Reference In ThisWorkbook.VBProject.References
         With Reference
-'            Debug.Print .Name
-'            Debug.Print .Description
-'            Debug.Print .Minor
-'            Debug.Print .Major
-'            Debug.Print .GUID
-'            Debug.Print
+            Debug.Print .Name
+            Debug.Print .Description
+            Debug.Print .Minor
+            Debug.Print .Major
+            Debug.Print .GUID
+            Debug.Print
         End With
     Next
 
@@ -299,6 +200,12 @@ Public Sub SetReferenceLibs()
     
     ' Microsoft Outlook 14.0 Object Library
     If Not ReferenceExists("{00062FFF-0000-0000-C000-000000000046}") Then
+        ThisWorkbook.VBProject.References.AddFromGuid _
+        GUID:="{00062FFF-0000-0000-C000-000000000046}", Major:=9, Minor:=4
+    End If
+    
+    ' Microsoft Project . Object Library
+    If Not ReferenceExists("{A7107640-94DF-1068-855E-00DD01075445}") Then
         ThisWorkbook.VBProject.References.AddFromGuid _
         GUID:="{00062FFF-0000-0000-C000-000000000046}", Major:=9, Minor:=4
     End If
