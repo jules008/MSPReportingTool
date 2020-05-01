@@ -1,67 +1,51 @@
 Attribute VB_Name = "CreatePowerPoint"
 Sub CreatePowerPoint()
 
-'First we declare the variables we will be using
-        Dim newPowerPoint As PowerPoint.Application
-        Dim activeSlide As PowerPoint.Slide
-        Dim pptable As PowerPoint.Table
-        Dim ppshape As PowerPoint.Shape
-        Dim cht As Excel.ChartObject
-        Dim xlcopy As Range
-        Dim ws(1 To 50) As Worksheet '
-        Dim wsname(1 To 50) As String '
-        Dim wsnum As Long
-        Dim wsrows(1 To 50) As Long
-        Dim wspages(1 To 50) As Long
-        Dim wspagestart(1 To 50) As Long
-        Dim wspagefinish(1 To 50) As Long
-        Dim rowref, nextrow As Long
-        Dim wsref, j, maxrows As Long
-        Dim startrows, heighttable, maxheight, minheight As Long
-        Dim morerows, lessrows As Boolean
-        Dim i As Long
-             
-' identify no of workstreams to process
-
-Sheets("Source Data").Activate
-
-dteNow = Format(Sheets("Control Panel").Range("F16").Value, "dd mmmm yyyy")
-startrows = Sheets("Control Panel").Range("G22").Value ' taken from control panel (value to use as the default to start the copy/paste process)
-maxheight = 500 ' when adding new lines this is the max limit to fit on a page
-minheight = Sheets("Control Panel").Range("G23").Value ' taken from control panel (value to use for slide sizing parameter)
-scalefactor = Sheets("Control Panel").Range("G24").Value ' taken from control panel (value to use for scaling ppt table
-pasteformat = Sheets("Control Panel").Range("G25").Value ' taken from control panel (value to use for scaling ppt table
-
-If Cells(1, 20) = "" Then
-
-    MsgBox ("No workstreams in the data - check data and run again")
-    Exit Sub
+    'First we declare the variables we will be using
+    Dim newPowerPoint As PowerPoint.Application
+    Dim activeSlide As PowerPoint.Slide
+    Dim pptable As PowerPoint.Table
+    Dim ppshape As PowerPoint.Shape
+    Dim cht As Excel.ChartObject
+    Dim xlcopy As Range
+    Dim ws(1 To 50) As Worksheet '
+    Dim wsname(1 To 50) As String  '
+    Dim wsnum As Long
+    Dim wsrows(1 To 50) As Long
+    Dim wspages(1 To 50) As Long
+    Dim wspagestart(1 To 50) As Long
+    Dim wspagefinish(1 To 50) As Long
+    Dim rowref, nextrow As Long
+    Dim wsref, j, maxrows As Long
+    Dim startrows, heighttable, maxheight, minheight As Long
+    Dim morerows, lessrows As Boolean
+    Dim i As Long
+         
+    ' identify no of workstreams to process
+        
+    dteNow = Now 'Format(Sheets("Control Panel").Range("F16").Value, "dd mmmm yyyy")
+    startrows = 5 'Sheets("Control Panel").Range("G22").Value ' taken from control panel (value to use as the default to start the copy/paste process)
+    maxheight = 500 ' when adding new lines this is the max limit to fit on a page
+    minheight = 450 'Sheets("Control Panel").Range("G23").Value ' taken from control panel (value to use for slide sizing parameter)
+    scalefactor = 1 'Sheets("Control Panel").Range("G24").Value ' taken from control panel (value to use for scaling ppt table
+    pasteformat = "Picture" 'Sheets("Control Panel").Range("G25").Value ' taken from control panel (value to use for scaling ppt table
     
-Else
-If Cells(2, 20) = "" Then
+    wsnum = ShtMain.Range("no_projs")
+    
+    ' set the wsname array with workstream names
+    
+    For i = 1 To wsnum ' set w/s names and row values
 
-    wsnum = 1
-
-Else
-
-wsnum = Range("T1").End(xlDown).Row
-
-End If
-End If
-     
-' set the wsname array with workstream names
-
-For i = 1 To wsnum ' set w/s names and row values
-
-    wsname(i) = Sheets("Source Data").Cells(i, 20)
-    wsrows(i) = Sheets("Source Data").Cells(i, 21)
-    rowref = wsrows(i) + 1 ' this is the start row for pasting additional pages
-    j = 0 ' used for page number
-    morerows = False
-    lessrows = False
-
-' Look for existing instance and if so use that one
-     
+        wsname(i) = ShtMain.Cells(i + 2, 21)
+        wsrows(i) = Application.WorksheetFunction.CountA(Worksheets(wsname(i)).Range("E:E"))
+        rowref = wsrows(i) + 1 ' this is the start row for pasting additional pages
+        j = 0 ' used for page number
+        morerows = False
+        lessrows = False
+    
+    ' Look for existing instance and if so use that one
+         
+        
     If PPTisopen Then
         Set newPowerPoint = GetObject(, "PowerPoint.Application")
     Else
@@ -411,12 +395,12 @@ Next i ' next workstream
      
     newPowerPoint.ActiveWindow.ViewType = ppViewNormal
      
-    AppActivate ("Microsoft PowerPoint")
+'    AppActivate ("Microsoft PowerPoint")
     Set activeSlide = Nothing
     Set newPowerPoint = Nothing
     
-Sheets("Control Panel").Activate
-Range("A1").Select
+''Sheets("Control Panel").Activate
+'Range("A1").Select
 
 MsgBox ("Reports complete for " & wsnum & " projects")
      
@@ -424,10 +408,8 @@ End Sub
 
 Sub createheader(wsname, rowref, nextrow, wsref)
 
-    Sheets("Template").Select
-    Rows("8:9").Select
+    ShtTaskView2.Range("C2:M2").Copy
     Application.CutCopyMode = False
-    Selection.Copy
     
     Sheets(wsname).Select
 

@@ -59,6 +59,13 @@ Public Sub LookAheadRep(ProjectPath As String)
     Worksheets("Look Ahead Report").Visible = True
     DeleteSheets
     
+    With ShtMain
+        .Unprotect
+        .Range("NO_PROJS") = 0
+        .Range("U:U").ClearContents
+        .Protect
+    End With
+    
     If ObjMSProject Is Nothing Then
       MsgBox "Project is not installed"
       Exit Sub
@@ -90,7 +97,7 @@ Public Sub LookAheadRep(ProjectPath As String)
         If Not Tsk Is Nothing And Tsk.Summary = False Then
             If Tsk.Number1 <= PLevel And Tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
                 AryTasks(i, enRef) = Tsk.Text1
-                AryTasks(i, enLevel) = Tsk.Number1
+                AryTasks(i, enlevel) = Tsk.Number1
                 AryTasks(i, enMileName) = Tsk.Name
                 AryTasks(i, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
                 AryTasks(i, enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
@@ -166,6 +173,14 @@ Public Sub AddProjSheets(ProjName As String)
                 
             .Range("A:M").Columns.AutoFit
             .Columns("N").Hidden = True
+            
+            With ShtMain
+                ShtMain.Unprotect
+                .Range("NO_PROJS") = .Range("NO_PROJS") + 1
+                .Range("Proj_IND").Offset(.Range("NO_PROJS"), 0) = ProjName
+                ShtMain.Protect
+            End With
+            
         End With
     End If
 End Sub

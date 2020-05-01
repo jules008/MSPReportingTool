@@ -28,9 +28,25 @@ Public Sub BtnImportClick()
 End Sub
 
 ' ===============================================================
+' BtnPPTExpClick
+' ---------------------------------------------------------------
+Public Sub BtnPPTExpClick()
+    ActionButtonClick Me.Shapes("BtnPPTExp")
+    CreatePowerPoint.CreatePowerPoint
+End Sub
+
+' ===============================================================
 ' BtnLARGenClick
 ' ---------------------------------------------------------------
 Public Sub BtnLARGenClick()
+    ActionButtonClick Me.Shapes("BtnLARGen")
+    LookAheadRep [MPP_FILEPATH]
+End Sub
+
+' ===============================================================
+' ActionButtonClick
+' ---------------------------------------------------------------
+Public Sub ActionButtonClick(Button As Shape)
     Dim DTime As Double
     
     On Error GoTo ErrorHandler
@@ -40,16 +56,15 @@ Public Sub BtnLARGenClick()
         Exit Sub
     End If
     
-    FormatButton Me.Shapes("BtnLARGen"), True
+    FormatButton Button, True
     
     DTime = Time
     Do While Time < DTime + 1 / 24 / 60 / 60 / 2
         DoEvents
     Loop
     
-    FormatButton Me.Shapes("BtnLARGen"), False
+    FormatButton Button, False
         
-    LookAheadRep [MPP_FILEPATH]
     
 Exit Sub
 ErrorHandler:
@@ -198,3 +213,5 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
     End With
     Me.Protect
 End Sub
+
+
