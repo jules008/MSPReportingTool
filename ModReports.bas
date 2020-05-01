@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 28 Apr 20
+' Date - 1 May 20
 '===============================================================
 Option Explicit
 
@@ -56,6 +56,7 @@ Public Sub LookAheadRep(ProjectPath As String)
     
     ModLibrary.PerfSettingsOn
     
+    Worksheets("Look Ahead Report").Visible = True
     DeleteSheets
     
     If ObjMSProject Is Nothing Then
@@ -82,7 +83,7 @@ Public Sub LookAheadRep(ProjectPath As String)
     PLevel = ShtMain.Range("LEVEL")
     
     'cycle through tasks in plan and add to tasks array
-    ReDim AryTasks(ObjMSProject.ActiveProject.Tasks.Count, 12)
+    ReDim AryTasks(1 To ObjMSProject.ActiveProject.Tasks.Count, 1 To 12)
     
     i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
@@ -111,8 +112,10 @@ Public Sub LookAheadRep(ProjectPath As String)
             i = i + 1
         End If
     Next Tsk
-    
+        
     DisplayTasks AryTasks
+    
+    Worksheets("Look Ahead Report").Visible = False
     
     ModLibrary.PerfSettingsOff
     
@@ -139,12 +142,15 @@ Public Sub AddProjSheets(ProjName As String)
     Dim SheetExists As Boolean
     
     For Each Wkst In Worksheets
-        If Wkst.Name = ProjName Then SheetExists = True Else SheetExists = False
+        If Wkst.Name = ProjName Then
+            SheetExists = True
+            Exit For
+        End If
     Next
     
     If Not SheetExists Then
-        Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = ProjName
-        
+        Worksheets("Look Ahead Report").Copy After:=Worksheets(Worksheets.Count)
+        ActiveSheet.Name = ProjName
         With Worksheets(ProjName)
             .Range("C2") = "Ref"
             .Range("D2") = "Level"
@@ -159,7 +165,7 @@ Public Sub AddProjSheets(ProjName As String)
             .Range("M2") = "Action"
                 
             .Range("A:M").Columns.AutoFit
-            .Columns("H").Hidden = True
+            .Columns("N").Hidden = True
         End With
     End If
 End Sub
@@ -192,19 +198,62 @@ End Sub
 ' completes reports for each project
 ' ---------------------------------------------------------------
 Public Sub DisplayTasks(AryTasks() As String)
-    Dim x As Integer
-    Dim y As Integer
+    Dim Task As Integer
+    Dim DataItem As enDataCols
     Dim ProjName As String
+    Dim AryTask(1 To 12) As Variant
+    Dim SheetName As String
+    Dim i As Integer
     
-    For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
-        For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)
+    For Task = LBound(AryTasks, 1) To UBound(AryTasks, 1)
+        ProjName = AryTasks(Task, enProject)
+        
+        For DataItem = LBound(AryTasks, 2) To UBound(AryTasks, 2)
+            AryTask(DataItem) = AryTasks(Task, DataItem)
+        Next
             
-            If ProjName = "All" Then
-                        
-            ProjName = AryTasks(x, enProject)
-            Worksheets(ProjName).Range("B2").Offset(x, y) = AryTasks(x, y)
-        Next y
-    Next x
-    
+        If ProjName = "All" Then
+            For i = 3 To Worksheets.Count
+                WriteTask AryTask, Worksheets(i).Name
+            Next
+        Else
+            WriteTask AryTask, ProjName
+        End If
+    Next Task
 End Sub
 
+' ===============================================================
+' WriteTask
+' Writes a task to the specified sheet
+' ---------------------------------------------------------------
+Public Sub WriteTask(AryTask() As Variant, ProjName As String)
+    Dim Wsheet As Worksheet
+    Static PrevTaskSummary As Boolean
+    Dim x As Integer
+    Dim y As Integer
+    
+    If ProjName = "" Then Exit Sub
+    
+    Set Wsheet = Worksheets(ProjName)
+    
+    x = Application.WorksheetFunction.CountA(Wsheet.Range("E:E"))
+    
+    If Wsheet.Range("B2").Offset(x - 1, enlevel) = "" And x > 1 Then
+        PrevTaskSummary = True
+    Else
+        PrevTaskSummary = False
+    End If
+    
+    If PrevTaskSummary And AryTask(enlevel) = "" Then
+        Wsheet.Range("B2").Offset(x, enlevel) = 0
+        Wsheet.Range("B2").Offset(x, enMileName) = "No Tasks"
+        x = x + 1
+    End If
+    
+    For y = LBound(AryTask) To UBound(AryTask)
+        Wsheet.Range("B2").Offset(x, y) = AryTask(y)
+    Next y
+        
+    Wsheet.Range("A:M").Columns.AutoFit
+    Set Wsheet = Nothing
+End Sub

@@ -207,7 +207,7 @@ Public Sub SetReferenceLibs()
     ' Microsoft Project . Object Library
     If Not ReferenceExists("{A7107640-94DF-1068-855E-00DD01075445}") Then
         ThisWorkbook.VBProject.References.AddFromGuid _
-        GUID:="{00062FFF-0000-0000-C000-000000000046}", Major:=9, Minor:=4
+        GUID:="{A7107640-94DF-1068-855E-00DD01075445}", Major:=9, Minor:=4
     End If
 
     'Microsoft PowerPoint 16.0 Object Library

@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 30 Apr 20
+' Date - 1 May 20
 '===============================================================
 Option Explicit
 
@@ -61,62 +61,76 @@ End Sub
 ' BtnLvl1Click
 ' ---------------------------------------------------------------
 Public Sub BtnLvl1Click()
+    Me.Unprotect
     [Level] = 1
     FormatButton Me.Shapes("BtnLvl1"), True
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), False
+    Me.Protect
 End Sub
 
 ' ===============================================================
 ' BtnLvl2Click
 ' ---------------------------------------------------------------
 Public Sub BtnLvl2Click()
+    Me.Unprotect
     [Level] = 2
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), True
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), False
+    Me.Protect
 End Sub
 
 ' ===============================================================
 ' BtnLvl3Click
 ' ---------------------------------------------------------------
 Public Sub BtnLvl3Click()
+    Me.Unprotect
     [Level] = 3
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), True
     FormatButton Me.Shapes("BtnLvl4"), False
+    Me.Protect
 End Sub
 
 ' ===============================================================
 ' BtnLvl4Click
 ' ---------------------------------------------------------------
 Public Sub BtnLvl4Click()
+    Me.Unprotect
+    
     [Level] = 4
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), True
+    
+    Me.Protect
 End Sub
 
 ' ===============================================================
 ' BtnLAR4wClick
 ' ---------------------------------------------------------------
 Public Sub BtnLAR4wClick()
+    Me.Unprotect
     [LA_PERIOD] = 4
     FormatButton Me.Shapes("BtnLAR12w"), False
     FormatButton Me.Shapes("BtnLAR4w"), True
+    Me.Protect
 End Sub
 
 ' ===============================================================
 ' BtnLAR12wClick
 ' ---------------------------------------------------------------
 Public Sub BtnLAR12wClick()
+    Me.Unprotect
     [LA_PERIOD] = 12
     FormatButton Me.Shapes("BtnLAR12w"), True
     FormatButton Me.Shapes("BtnLAR4w"), False
+    Me.Protect
 End Sub
 
 ' ===============================================================
@@ -124,7 +138,7 @@ End Sub
 ' Formats the control to be selected or not
 ' ---------------------------------------------------------------
 Private Sub FormatButton(Btn As Shape, OnState As Boolean)
-    
+    Me.Unprotect
     With Btn
         If OnState Then
             With .Fill
@@ -182,4 +196,5 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
         
         End If
     End With
+    Me.Protect
 End Sub
