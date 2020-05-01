@@ -408,7 +408,11 @@ End Sub
 
 Sub createheader(wsname, rowref, nextrow, wsref)
 
-    ShtTaskView2.Range("C2:M2").Copy
+    With ShtTaskView1
+        .Visible = xlSheetVisible
+        .Range("C2:M2").Copy
+        .Visible = xlSheetHidden
+    End With
     Application.CutCopyMode = False
     
     Sheets(wsname).Select
