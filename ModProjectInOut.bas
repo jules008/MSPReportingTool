@@ -163,7 +163,7 @@ Public Sub SetReferenceLibs()
     End If
     
     ' Microsoft Forms 2.0 Object Library
-    If Not ReferenceExists("{00020813-0000-0000-C000-000000000046}") Then
+    If Not ReferenceExists("{0D452EE1-E08F-101A-852E-02608C4D0BB4}") Then
         ThisWorkbook.VBProject.References.AddFromGuid _
         GUID:="{0D452EE1-E08F-101A-852E-02608C4D0BB4}", Major:=2, Minor:=0
     End If
@@ -207,13 +207,13 @@ Public Sub SetReferenceLibs()
     ' Microsoft Project . Object Library
     If Not ReferenceExists("{A7107640-94DF-1068-855E-00DD01075445}") Then
         ThisWorkbook.VBProject.References.AddFromGuid _
-        GUID:="{A7107640-94DF-1068-855E-00DD01075445}", Major:=9, Minor:=4
+        GUID:="{A7107640-94DF-1068-855E-00DD01075445}", Major:=4, Minor:=9
     End If
 
     'Microsoft PowerPoint 16.0 Object Library
-    If Not ReferenceExists("{A7107640-94DF-1068-855E-00DD01075445}") Then
+    If Not ReferenceExists("{91493440-5A91-11CF-8700-00AA0060263B}") Then
         ThisWorkbook.VBProject.References.AddFromGuid _
-        GUID:="{91493440-5A91-11CF-8700-00AA0060263B}", Major:=12, Minor:=2
+        GUID:="{91493440-5A91-11CF-8700-00AA0060263B}", Major:=2, Minor:=12
     End If
 End Sub
 
