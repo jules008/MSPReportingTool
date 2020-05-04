@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 1 May 20
+' Date - 4 May 20
 '===============================================================
 Option Explicit
 
@@ -24,7 +24,9 @@ Option Explicit
 ' BtnImportClick
 ' ---------------------------------------------------------------
 Public Sub BtnImportClick()
-    SelectMPP
+    Me.Unprotect
+    ModReports.DataImport
+    Me.Protect
 End Sub
 
 ' ===============================================================
@@ -40,7 +42,15 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLARGenClick()
     ActionButtonClick Me.Shapes("BtnLARGen")
-    LookAheadRep [MPP_FILEPATH]
+    LookAheadRep [mpp_filepath]
+End Sub
+
+' ===============================================================
+' BtnLARGenClick
+' ---------------------------------------------------------------
+Public Sub BtnExcRepGenClick()
+    ActionButtonClick Me.Shapes("BtnExcRepGen")
+    ExceptionReport
 End Sub
 
 ' ===============================================================
@@ -51,7 +61,7 @@ Public Sub ActionButtonClick(Button As Shape)
     
     On Error GoTo ErrorHandler
     
-    If [MPP_FILEPATH] = "" Then
+    If [mpp_filepath] = "" Then
         MsgBox "Please import a Project File", vbOKOnly + vbExclamation
         Exit Sub
     End If
@@ -82,6 +92,7 @@ Public Sub BtnLvl1Click()
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), False
+    FormatButton Me.Shapes("BtnLvlAll"), False
     Me.Protect
 End Sub
 
@@ -95,6 +106,7 @@ Public Sub BtnLvl2Click()
     FormatButton Me.Shapes("BtnLvl2"), True
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), False
+    FormatButton Me.Shapes("BtnLvlAll"), False
     Me.Protect
 End Sub
 
@@ -108,6 +120,7 @@ Public Sub BtnLvl3Click()
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), True
     FormatButton Me.Shapes("BtnLvl4"), False
+    FormatButton Me.Shapes("BtnLvlAll"), False
     Me.Protect
 End Sub
 
@@ -122,29 +135,24 @@ Public Sub BtnLvl4Click()
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), True
+    FormatButton Me.Shapes("BtnLvlAll"), False
     
     Me.Protect
 End Sub
 
 ' ===============================================================
-' BtnLAR4wClick
+' BtnLvlAllClick
 ' ---------------------------------------------------------------
-Public Sub BtnLAR4wClick()
+Public Sub BtnLvlAllClick()
     Me.Unprotect
-    [LA_PERIOD] = 4
-    FormatButton Me.Shapes("BtnLAR12w"), False
-    FormatButton Me.Shapes("BtnLAR4w"), True
-    Me.Protect
-End Sub
-
-' ===============================================================
-' BtnLAR12wClick
-' ---------------------------------------------------------------
-Public Sub BtnLAR12wClick()
-    Me.Unprotect
-    [LA_PERIOD] = 12
-    FormatButton Me.Shapes("BtnLAR12w"), True
-    FormatButton Me.Shapes("BtnLAR4w"), False
+    
+    [Level] = 9999
+    FormatButton Me.Shapes("BtnLvl1"), False
+    FormatButton Me.Shapes("BtnLvl2"), False
+    FormatButton Me.Shapes("BtnLvl3"), False
+    FormatButton Me.Shapes("BtnLvl4"), False
+    FormatButton Me.Shapes("BtnLvlAll"), True
+    
     Me.Protect
 End Sub
 
@@ -214,4 +222,27 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
     Me.Protect
 End Sub
 
-
+' ===============================================================
+' TxtLAValue_Change
+' Text box for number of weeks look ahead
+' ---------------------------------------------------------------
+Private Sub TxtLAValue_Change()
+    Dim LAValue As Variant
+    
+    Sleep 200
+    LAValue = TxtLAValue
+    If LAValue = "" Then Exit Sub
+    
+    If Not IsNumeric(TxtLAValue) Then
+        MsgBox "Please only enter numbers", vbOKOnly + vbExclamation, "Look Ahead Value"
+        Exit Sub
+    End If
+    
+    If TxtLAValue < 1 Or TxtLAValue > 500 Then
+        MsgBox "Please only enter number between 1 and 500", vbOKOnly + vbExclamation, "Look Ahead Value"
+        Exit Sub
+    End If
+    Me.Unprotect
+    [LA_PERIOD] = TxtLAValue
+    Me.Protect
+End Sub

@@ -8,7 +8,7 @@ Attribute VB_Name = "ModGlobals"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 1 May 20
+' Date - 4 May 20
 '===============================================================
 Option Explicit
 
@@ -52,4 +52,11 @@ Enum enDataCols
     enImpact
     enAction
     enProject
+End Enum
+
+Enum enExcepRep
+    MissedRed = 1
+    FutureRed
+    Amber
+    Completed
 End Enum

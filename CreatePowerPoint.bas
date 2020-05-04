@@ -22,7 +22,9 @@ Sub CreatePowerPoint()
     Dim i As Long
          
     ' identify no of workstreams to process
-        
+    
+    On Error Resume Next
+    
     dteNow = Now 'Format(Sheets("Control Panel").Range("F16").Value, "dd mmmm yyyy")
     startrows = 5 'Sheets("Control Panel").Range("G22").Value ' taken from control panel (value to use as the default to start the copy/paste process)
     maxheight = 500 ' when adding new lines this is the max limit to fit on a page
@@ -31,9 +33,12 @@ Sub CreatePowerPoint()
     pasteformat = "Picture" 'Sheets("Control Panel").Range("G25").Value ' taken from control panel (value to use for scaling ppt table
     
     wsnum = ShtMain.Range("no_projs")
-    
+    If wsnum = 0 Then
+        MsgBox "Please run the Look Ahead Report first to extract the presentation data", vbOKOnly + vbInformation
+        Exit Sub
+    End If
     ' set the wsname array with workstream names
-    
+
     For i = 1 To wsnum ' set w/s names and row values
 
         wsname(i) = ShtMain.Cells(i + 2, 21)
@@ -62,7 +67,7 @@ Sub CreatePowerPoint()
     
     'Loop through each workstream report in the Excel worksheet and paste them into the PowerPoint
     
-    Sheets(wsname(i)).Select
+    Sheets(wsname(i)).Activate
     
     wsref = i
     
@@ -415,7 +420,7 @@ Sub createheader(wsname, rowref, nextrow, wsref)
     End With
     Application.CutCopyMode = False
     
-    Sheets(wsname).Select
+    Sheets(wsname).Activate
 
     Rows(rowref & ":" & rowref).Select
     Selection.Insert Shift:=xlDown
