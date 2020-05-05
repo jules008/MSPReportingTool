@@ -189,6 +189,7 @@ Public Sub DeleteSheets()
             Case Is = ShtMain.Name
             Case Is = ShtPlanData.Name
             Case Is = ShtTaskView.Name
+            Case Is = ShtDepLog.Name
             Case Else
                 WSheet.Delete
         End Select

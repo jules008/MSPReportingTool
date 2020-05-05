@@ -46,11 +46,19 @@ Public Sub BtnLARGenClick()
 End Sub
 
 ' ===============================================================
-' BtnLARGenClick
+' BtnExcRepGenClick
 ' ---------------------------------------------------------------
 Public Sub BtnExcRepGenClick()
     ActionButtonClick Me.Shapes("BtnExcRepGen")
     ExceptionReport
+End Sub
+
+' ===============================================================
+' BtnDepRepGenClick
+' ---------------------------------------------------------------
+Public Sub BtnDepRepGenClick()
+    ActionButtonClick Me.Shapes("BtnDepRepGen")
+    DepReport
 End Sub
 
 ' ===============================================================
