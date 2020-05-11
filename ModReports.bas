@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 4 May 20
+' Date - 11 May 20
 '===============================================================
 Option Explicit
 
@@ -73,13 +73,14 @@ Public Sub LookAheadRep(ProjectPath As String)
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
         If Not Tsk Is Nothing And Tsk.Summary = False Then
             If Tsk.Number1 <= PLevel And Tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
-                AryTasks(i, enRef) = Tsk.Text1
+                AryTasks(i, enRef) = tsk.UniqueID
                 AryTasks(i, enlevel) = Tsk.Number1
                 AryTasks(i, enMileName) = Tsk.Name
                 AryTasks(i, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
                 AryTasks(i, enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
                 AryTasks(i, enDTI) = Tsk.Number13
                 AryTasks(i, enRAG) = Tsk.Text22
+                AryTasks(i, enLocalRAG) = tsk.Text10
                 AryTasks(i, enIssue) = Tsk.Text14
                 AryTasks(i, enImpact) = Tsk.Text15
                 AryTasks(i, enAction) = Tsk.Text16
@@ -144,8 +145,8 @@ Public Sub AddProjSheets(ProjName As String)
             .Range("F2") = "Baseline Finish"
             .Range("G2") = "Forecast Finish"
             .Range("H2") = "DTI"
-            .Range("I2") = "Last RAG"
-            .Range("J2") = "RAG"
+            .Range("I2") = "RAG"
+            .Range("J2") = "Local RAG"
             .Range("K2") = "Issue"
             .Range("L2") = "Impact"
             .Range("M2") = "Action"
@@ -341,7 +342,7 @@ Public Sub DataImport()
     
     i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
-        AryTasks(i, enRef) = Tsk.Text1
+        AryTasks(i, enRef) = tsk.UniqueID
         AryTasks(i, enlevel) = Tsk.Number1
         AryTasks(i, enMileName) = Tsk.Name
         AryTasks(i, enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
@@ -353,7 +354,6 @@ Public Sub DataImport()
         AryTasks(i, enAction) = Tsk.Text16
         AryTasks(i, enProject) = Tsk.Text8
         ProjName = AryTasks(i, enProject)
-        AddProjSheets ProjName
         
         i = i + 1
     Next Tsk

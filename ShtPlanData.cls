@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 03 May 20
+' Date - 11 May 20
 '===============================================================
 Option Explicit
 
@@ -32,21 +32,21 @@ Public Sub DisplayTasks(AryTasks() As Variant)
     
     For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
         For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)
-            Me.Range("B2").Offset(x, y) = AryTasks(x, y)
+            Me.Range("A2").Offset(x, y) = AryTasks(x, y)
         Next y
     Next x
     
-    Range("C2") = "Ref"
-    Range("D2") = "Level"
-    Range("E2") = "Milestone Name"
-    Range("F2") = "Baseline Finish"
-    Range("G2") = "Forecast Finish"
-    Range("H2") = "DTI"
-    Range("I2") = "Last RAG"
-    Range("J2") = "RAG"
-    Range("K2") = "Issue"
-    Range("L2") = "Impact"
-    Range("M2") = "Action"
+    Range("B2") = "Ref"
+    Range("C2") = "Level"
+    Range("D2") = "Milestone Name"
+    Range("E2") = "Baseline Finish"
+    Range("F2") = "Forecast Finish"
+    Range("G2") = "DTI"
+    Range("H2") = "Last RAG"
+    Range("I2") = "RAG"
+    Range("J2") = "Issue"
+    Range("K2") = "Impact"
+    Range("L2") = "Action"
     
     Range("A:M").Columns.AutoFit
 End Sub
