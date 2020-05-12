@@ -164,8 +164,6 @@ Public Sub DependancyRep()
                         AryTasks(i, enDLRef) = tsk.UniqueID
                         AryTasks(i, enDLMileName) = tsk.Name
                         AryTasks(i, enDLLevel) = tsk.number1
-                        AryTasks(i, enDLDepIn) = tsk.Flag18
-                        AryTasks(i, enDLDepOut) = tsk.Flag19
                         AryTasks(i, enDLBenef) = tsk.Text20
                         AryTasks(i, enDLDonor) = tsk.Text28
                         AryTasks(i, enDLBaseFinish) = Format(tsk.BaselineFinish, "dd mmm yy")
@@ -176,6 +174,9 @@ Public Sub DependancyRep()
                         AryTasks(i, enDLImpact) = tsk.Text15
                         AryTasks(i, enDLAction) = tsk.Text16
                         AryTasks(i, enDLProject) = tsk.Text8
+                        
+                        If tsk.flag18 = True Then AryTasks(i, enDLDepIn) = 1 Else AryTasks(i, enDLDepIn) = 0
+                        If tsk.flag19 = True Then AryTasks(i, enDLDepOut) = 1 Else AryTasks(i, enDLDepOut) = 0
                         i = i + 1
                 End Select
             End If

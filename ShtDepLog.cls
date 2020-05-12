@@ -28,7 +28,7 @@ Public Sub DisplayTasks(AryTasks() As Variant)
     Dim x As Integer
     Dim y As Integer
     
-    Range("A1:AA10000").ClearContents
+    ClearTasks
     
     For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
         For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)
@@ -36,21 +36,22 @@ Public Sub DisplayTasks(AryTasks() As Variant)
         Next y
     Next x
     
+    Range("A1") = "Dependency Log"
     Range("B2") = "Ref"
     Range("C2") = "Milestone Name"
     Range("D2") = "Level"
-    Range("D2") = "Dep In"
-    Range("D2") = "Dep Out"
-    Range("D2") = "Beneficiary"
-    Range("D2") = "Donor"
-    Range("E2") = "Baseline Finish"
-    Range("F2") = "Forecast Finish"
-    Range("G2") = "RAG"
-    Range("H2") = "Last RAG"
-    Range("I2") = "Issue"
-    Range("J2") = "Impact"
-    Range("K2") = "Action"
-    Range("L2") = "Project"
+    Range("E2") = "Dep In"
+    Range("F2") = "Dep Out"
+    Range("G2") = "Beneficiary"
+    Range("H2") = "Donor"
+    Range("I2") = "Baseline Finish"
+    Range("J2") = "Forecast Finish"
+    Range("K2") = "RAG"
+    Range("L2") = "Last RAG"
+    Range("M2") = "Issue"
+    Range("N2") = "Impact"
+    Range("O2") = "Action"
+    Range("P2") = "Project"
     
     Range("A:M").Columns.AutoFit
 End Sub

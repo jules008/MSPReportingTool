@@ -16,4 +16,5 @@ Public Sub ClearData()
     ModReports.DeleteSheets
     ShtExceptRep.ClearData
     ShtMain.Activate
+    ShtDepLog.ClearTasks
 End Sub
