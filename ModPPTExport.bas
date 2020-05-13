@@ -44,6 +44,8 @@ Public Sub PPTExport()
     
     GetSlideRange
         
+    ReverseSlideOrder MyPPT
+    
     PerfSettingsOff
     Set PowerPointApp = Nothing
     Set MyPPT = Nothing
@@ -65,8 +67,11 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub GetSlideRange()
     Dim RepSheet As Worksheet
+    Dim RngPrint As Range
     Dim RngReport As Range
     Dim Title As String
+    Dim x As Integer
+    Dim NoCols As Integer
     
     On Error GoTo ErrorHandler
     
@@ -78,20 +83,39 @@ Public Sub GetSlideRange()
             Case Else
         
                 Set RngReport = RepSheet.UsedRange
-                RngReport.Copy
-                Title = RepSheet.Range("A1")
-                CreatePPTSlide RngReport, Title
+                NoCols = RngReport.Columns.Count
+                
+                Debug.Print RngReport.Address
+                x = 1
+                Do While x < RngReport.Rows.Count
+                    With RngReport
+                        Set RngPrint = .Range(.Cells(x, 1), .Cells(x + 15, NoCols))
+                    End With
+                    Debug.Print RngPrint.Address
+                    
+                    RngPrint.Copy
+                    Title = RepSheet.Range("A1")
+                    
+                    If Application.WorksheetFunction.CountA(RngPrint) > 0 Then
+                        CreatePPTSlide RngPrint, Title
+                    End If
+                    
+                    x = x + 16
+                Loop
+                                
         End Select
     
     Next
     Set RepSheet = Nothing
     Set RngReport = Nothing
+    Set RngPrint = Nothing
 Exit Sub
 
 ErrorHandler:
     
     Set RepSheet = Nothing
     Set RngReport = Nothing
+    Set RngPrint = Nothing
 End Sub
 
 ' ===============================================================
@@ -119,5 +143,22 @@ Sub CreatePPTSlide(RngPaste As Range, Title As String)
   
 End Sub
 
+' ===============================================================
+' ReverseSlideOrder
+' Reverses the order of the powerpoint slides
+' ---------------------------------------------------------------
+Sub ReverseSlideOrder(MyPPT As PowerPoint.Presentation)
+   Dim NoSlides As Long
+   Dim x As Long
+
+   NoSlides = MyPPT.Slides.Count
+
+      For x = 1 To NoSlides - 1
+
+         MyPPT.Slides(NoSlides).Cut
+         MyPPT.Slides.Paste x
+      Next x
+
+End Sub
 
 
