@@ -17,7 +17,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 3 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -76,8 +76,6 @@ Public Sub EnterData(AryInput() As Variant, Section As enExcepRep)
         .Offset(1, 0).ClearFormats
         .Offset(1, 0) = AryInput
     End With
-    
-    RngResult.Columns.AutoFit
     
     Set RngInsert = Nothing
     Set RngResult = Nothing

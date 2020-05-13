@@ -9,7 +9,7 @@ Attribute VB_Name = "ModPPTExport"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 12 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -24,8 +24,17 @@ Public Sub PPTExport()
     
     On Error Resume Next
     
-    Set PowerPointApp = New PowerPoint.Application
-        
+    Set PowerPointApp = GetObject(Class:="PowerPoint.Application")
+    
+    Err.Clear
+
+    If PowerPointApp Is Nothing Then Set PowerPointApp = CreateObject(Class:="PowerPoint.Application")
+    
+    If Err.Number = 429 Then
+        MsgBox "PowerPoint could not be found, aborting."
+        Exit Sub
+    End If
+    
     On Error GoTo ErrorHandler
 
     PowerPointApp.Presentations.Add
@@ -34,10 +43,7 @@ Public Sub PPTExport()
     PerfSettingsOn
     
     GetSlideRange
-    
-    
-    MsgBox "Powerpoint Created"
-    
+        
     PerfSettingsOff
     Set PowerPointApp = Nothing
     Set MyPPT = Nothing
@@ -64,17 +70,18 @@ Public Sub GetSlideRange()
     
     On Error GoTo ErrorHandler
     
-    For Each RepSheet In Workbooks
+    For Each RepSheet In Worksheets
         Select Case RepSheet.Name
             
-            Case "ShtMain", "ShtTaskView", "ShtDepLog", "ShtExceptRep"
+            Case ShtMain.Name, ShtTaskView.Name, ShtPlanData.Name
             
-                
-        Set RngReport = RepSheet.UsedRange
+            Case Else
         
-        Title = RepSheet.Range("A1")
-        
-        CreatePPTSlide RngReport, Title
+                Set RngReport = RepSheet.UsedRange
+                RngReport.Copy
+                Title = RepSheet.Range("A1")
+                CreatePPTSlide RngReport, Title
+        End Select
     
     Next
     Set RepSheet = Nothing
@@ -94,28 +101,21 @@ End Sub
 Sub CreatePPTSlide(RngPaste As Range, Title As String)
     Dim mySlide As PowerPoint.Slide
     Dim myShape As Object
-
-
-'Add a slide to the Presentation
-  Set mySlide = MyPPT.Slides.Add(1, 11) '11 = ppLayoutTitleOnly
-
-'Copy Excel Range
-  rng.Copy
-
-'Paste to PowerPoint and position
-  mySlide.Shapes.PasteSpecial DataType:=2  '2 = ppPasteEnhancedMetafile
-  Set myShape = mySlide.Shapes(mySlide.Shapes.Count)
   
-    'Set position:
-      myShape.Left = 66
-      myShape.Top = 152
+    Set mySlide = MyPPT.Slides.Add(1, 11) '11 = ppLayoutTitleOnly
+    
+    mySlide.Shapes.Title.TextFrame.TextRange = Title
+    mySlide.Shapes.PasteSpecial DataType:=2  '2 = ppPasteEnhancedMetafile
+    Set myShape = mySlide.Shapes(mySlide.Shapes.Count)
+  
+    myShape.Left = 40
+    myShape.Top = 100
+    myShape.Width = 900
 
-'Make PowerPoint Visible and Active
-  PowerPointApp.Visible = True
-  PowerPointApp.Activate
+    PowerPointApp.Visible = True
+    PowerPointApp.Activate
 
-'Clear The Clipboard
-  Application.CutCopyMode = False
+    Application.CutCopyMode = False
   
 End Sub
 

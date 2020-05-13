@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 12 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -27,14 +27,6 @@ Public Sub BtnImportClick()
     Me.Unprotect
     ModReports.DataImport
     Me.Protect
-End Sub
-
-' ===============================================================
-' BtnPPTExpClick
-' ---------------------------------------------------------------
-Public Sub BtnPPTExpClick()
-    ActionButtonClick Me.Shapes("BtnPPTExp")
-    CreatePowerPoint.CreatePowerPoint
 End Sub
 
 ' ===============================================================

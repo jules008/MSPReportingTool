@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 12 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -53,7 +53,6 @@ Public Sub DisplayTasks(AryTasks() As Variant)
     Range("O2") = "Action"
     Range("P2") = "Project"
     
-    Range("A:M").Columns.AutoFit
 End Sub
 
 ' ===============================================================

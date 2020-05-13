@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 12 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -223,21 +223,32 @@ Public Sub AddProjSheets(ProjName As String)
         ActiveSheet.Name = ProjName
 '        ActiveSheet
         With Worksheets(ProjName)
-            .Range("C2") = "Ref"
-            .Range("D2") = "Level"
-            .Range("E2") = "Milestone Name"
-            .Range("F2") = "Baseline Finish"
-            .Range("G2") = "Forecast Finish"
-            .Range("H2") = "DTI"
-            .Range("I2") = "RAG"
-            .Range("J2") = "Local RAG"
-            .Range("K2") = "Issue"
-            .Range("L2") = "Impact"
-            .Range("M2") = "Action"
-            .Range("N1") = "Temp"
-            .Range("A:M").Columns.AutoFit
-            .Columns("N").Hidden = True
-                        
+            .Range("A1") = "Milestone Report - " & ProjName
+            .Range("B2") = "Ref"
+            .Range("C2") = "Level"
+            .Range("D2") = "Milestone Name"
+            .Range("E2") = "Baseline Finish"
+            .Range("F2") = "Forecast Finish"
+            .Range("G2") = "DTI"
+            .Range("H2") = "RAG"
+            .Range("I2") = "Local RAG"
+            .Range("J2") = "Issue"
+            .Range("K2") = "Impact"
+            .Range("L2") = "Action"
+            
+            .Columns(1).ColumnWidth = 10
+            .Columns(2).ColumnWidth = 5
+            .Columns(3).ColumnWidth = 5
+            .Columns(4).ColumnWidth = 40
+            .Columns(5).ColumnWidth = 15
+            .Columns(6).ColumnWidth = 15
+            .Columns(7).ColumnWidth = 15
+            .Columns(8).ColumnWidth = 10
+            .Columns(9).ColumnWidth = 10
+            .Columns(10).ColumnWidth = 10
+            .Columns(11).ColumnWidth = 10
+            .Columns(12).ColumnWidth = 10
+            .Columns(13).Hidden = True
             With ShtMain
                 ShtMain.Unprotect
                 .Range("NO_PROJS") = .Range("NO_PROJS") + 1
@@ -315,19 +326,19 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub WriteTask(AryTask() As Variant, ProjName As String)
     Dim WSheet As Worksheet
-    Static PrevTaskSummary As Boolean
     Dim x As Integer
     Dim y As Integer
     
     If ProjName = "" Then Exit Sub
     
     Set WSheet = Worksheets(ProjName)
-        
+    
+    x = Application.WorksheetFunction.CountA(WSheet.Range("B:B")) + 1
+    
     For y = LBound(AryTask) To UBound(AryTask)
-        WSheet.Range("B2").Offset(x, y) = AryTask(y)
+        WSheet.Range("A1").Offset(x, y) = AryTask(y)
     Next y
         
-    WSheet.Range("A:M").Columns.AutoFit
     Set WSheet = Nothing
 End Sub
 
