@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 11 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -89,12 +89,6 @@ Public Sub LookAheadRep(ProjectPath As String)
                 i = i + 1
             End If
         End If
-        
-        If Not Tsk Is Nothing And Tsk.Summary = True Then
-            AryTasks(i, enMileName) = Tsk.Name
-            AryTasks(i, enProject) = "All"
-            i = i + 1
-        End If
     Next Tsk
         
     DisplayTasks AryTasks
@@ -113,6 +107,96 @@ ErrorHandler:
     Debug.Print Err.Number & " - " & Err.Description
     ModLibrary.PerfSettingsOff
     ObjMSProject.FileClose (False)
+    Set ObjMSProject = Nothing
+End Sub
+
+' ===============================================================
+' DependancyRep
+' Opens project file from passed filepath, extracts data and sends
+' to display procedure
+' ---------------------------------------------------------------
+Public Sub DependancyRep()
+    Dim ObjMSProject As Object
+    Dim ProgName As String
+    Dim ProjName As String
+    Dim AryTasks() As Variant
+    Dim PLevel As Integer
+    Dim LookAhead As Integer
+    Dim tsk As Task
+    Dim i As Integer
+    
+    On Error GoTo ErrorHandler:
+    
+    Set ObjMSProject = CreateObject("MSProject.Application")
+    
+    ModLibrary.PerfSettingsOn
+    
+    If ObjMSProject Is Nothing Then
+      MsgBox "Project is not installed"
+      Exit Sub
+    End If
+    
+    With ObjMSProject
+        .Visible = False
+        .DisplayAlerts = False
+        .FileOpen Name:=[mpp_filepath], ReadOnly:=True
+        .OptionsViewEx DisplaySummaryTasks:=True
+        .OutlineShowAllTasks
+        .FilterApply Name:="All Tasks"
+        .AutoFilter
+        .AutoFilter
+        .Application.CalculateProject
+        
+    End With
+    
+    LookAhead = ShtMain.Range("LA_PERIOD")
+    PLevel = ShtMain.Range("LEVEL")
+    
+    'cycle through tasks in plan and add to tasks array
+    ReDim AryTasks(1 To ObjMSProject.ActiveProject.Tasks.Count, 1 To 15)
+    
+    i = 1
+    For Each tsk In ObjMSProject.ActiveProject.Tasks
+        If Not tsk Is Nothing And tsk.Summary = False Then
+            If tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
+                Select Case tsk.number1
+                    Case 10, 5, 11
+                        AryTasks(i, enDLRef) = tsk.UniqueID
+                        AryTasks(i, enDLMileName) = tsk.Name
+                        AryTasks(i, enDLLevel) = tsk.number1
+                        AryTasks(i, enDLBenef) = tsk.Text20
+                        AryTasks(i, enDLDonor) = tsk.Text28
+                        AryTasks(i, enDLBaseFinish) = Format(tsk.BaselineFinish, "dd mmm yy")
+                        AryTasks(i, enDLForeFinish) = Format(tsk.finish, "dd mmm yy")
+                        AryTasks(i, enDLRAG) = tsk.Text22
+                        AryTasks(i, enDLLocalRAG) = tsk.Text10
+                        AryTasks(i, enDLIssue) = tsk.Text14
+                        AryTasks(i, enDLImpact) = tsk.Text15
+                        AryTasks(i, enDLAction) = tsk.Text16
+                        AryTasks(i, enDLProject) = tsk.Text8
+                        
+                        If tsk.flag18 = True Then AryTasks(i, enDLDepIn) = 1 Else AryTasks(i, enDLDepIn) = 0
+                        If tsk.flag19 = True Then AryTasks(i, enDLDepOut) = 1 Else AryTasks(i, enDLDepOut) = 0
+                        i = i + 1
+                End Select
+            End If
+        End If
+    Next tsk
+        
+    ShtDepLog.DisplayTasks AryTasks
+    
+    ModLibrary.PerfSettingsOff
+    
+    MsgBox "Dependancy Report Complete", vbOKOnly + vbInformation
+    
+    ObjMSProject.fileclose (False)
+    Set ObjMSProject = Nothing
+Exit Sub
+
+ErrorHandler:
+    Debug.Print Err.Number & " - " & Err.Description
+    ModLibrary.PerfSettingsOff
+    ObjMSProject.fileclose (False)
     Set ObjMSProject = Nothing
 End Sub
 
@@ -139,21 +223,32 @@ Public Sub AddProjSheets(ProjName As String)
         ActiveSheet.Name = ProjName
 '        ActiveSheet
         With Worksheets(ProjName)
-            .Range("C2") = "Ref"
-            .Range("D2") = "Level"
-            .Range("E2") = "Milestone Name"
-            .Range("F2") = "Baseline Finish"
-            .Range("G2") = "Forecast Finish"
-            .Range("H2") = "DTI"
-            .Range("I2") = "RAG"
-            .Range("J2") = "Local RAG"
-            .Range("K2") = "Issue"
-            .Range("L2") = "Impact"
-            .Range("M2") = "Action"
-            .Range("N1") = "Temp"
-            .Range("A:M").Columns.AutoFit
-            .Columns("N").Hidden = True
-                        
+            .Range("A1") = "Milestone Report - " & ProjName
+            .Range("B2") = "Ref"
+            .Range("C2") = "Level"
+            .Range("D2") = "Milestone Name"
+            .Range("E2") = "Baseline Finish"
+            .Range("F2") = "Forecast Finish"
+            .Range("G2") = "DTI"
+            .Range("H2") = "RAG"
+            .Range("I2") = "Local RAG"
+            .Range("J2") = "Issue"
+            .Range("K2") = "Impact"
+            .Range("L2") = "Action"
+            
+            .Columns(1).ColumnWidth = 10
+            .Columns(2).ColumnWidth = 5
+            .Columns(3).ColumnWidth = 5
+            .Columns(4).ColumnWidth = 40
+            .Columns(5).ColumnWidth = 15
+            .Columns(6).ColumnWidth = 15
+            .Columns(7).ColumnWidth = 15
+            .Columns(8).ColumnWidth = 10
+            .Columns(9).ColumnWidth = 10
+            .Columns(10).ColumnWidth = 10
+            .Columns(11).ColumnWidth = 10
+            .Columns(12).ColumnWidth = 10
+            .Columns(13).Hidden = True
             With ShtMain
                 ShtMain.Unprotect
                 .Range("NO_PROJS") = .Range("NO_PROJS") + 1
@@ -221,14 +316,7 @@ Public Sub DisplayTasks(AryTasks() As String)
         For DataItem = LBound(AryTasks, 2) To UBound(AryTasks, 2)
             AryTask(DataItem) = AryTasks(Task, DataItem)
         Next
-            
-        If ProjName = "All" Then
-            For i = 3 To Worksheets.Count
-                WriteTask AryTask, Worksheets(i).Name
-            Next
-        Else
-            WriteTask AryTask, ProjName
-        End If
+        WriteTask AryTask, ProjName
     Next Task
 End Sub
 
@@ -238,7 +326,6 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub WriteTask(AryTask() As Variant, ProjName As String)
     Dim WSheet As Worksheet
-    Static PrevTaskSummary As Boolean
     Dim x As Integer
     Dim y As Integer
     
@@ -246,25 +333,12 @@ Public Sub WriteTask(AryTask() As Variant, ProjName As String)
     
     Set WSheet = Worksheets(ProjName)
     
-    x = Application.WorksheetFunction.CountA(WSheet.Range("E:E"))
-    
-    If WSheet.Range("B2").Offset(x - 1, enlevel) = "" And x > 1 Then
-        PrevTaskSummary = True
-    Else
-        PrevTaskSummary = False
-    End If
-    
-    If PrevTaskSummary And AryTask(enlevel) = "" Then
-        WSheet.Range("B2").Offset(x, enlevel) = 0
-        WSheet.Range("B2").Offset(x, enMileName) = "No Tasks"
-        x = x + 1
-    End If
+    x = Application.WorksheetFunction.CountA(WSheet.Range("B:B")) + 1
     
     For y = LBound(AryTask) To UBound(AryTask)
-        WSheet.Range("B2").Offset(x, y) = AryTask(y)
+        WSheet.Range("A1").Offset(x, y) = AryTask(y)
     Next y
         
-    WSheet.Range("A:M").Columns.AutoFit
     Set WSheet = Nothing
 End Sub
 
@@ -389,7 +463,9 @@ Public Sub ExceptionReport()
     Dim BLFinish As Date
     Dim FCFinish As Date
     Dim ActFinish As Date
+    Dim LookAhead As Integer
     Dim TaskComplete As Boolean
+    Dim PLevel As Integer
     Dim DTI As Double
     Dim LocalRAG As String
     Dim CalcRAG As String
@@ -426,49 +502,56 @@ Public Sub ExceptionReport()
         
     End With
     
+    LookAhead = ShtMain.Range("LA_PERIOD")
+    PLevel = ShtMain.Range("LEVEL")
+    
     i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
+        If Not tsk Is Nothing And tsk.Summary = False Then
+            If tsk.number1 <= PLevel And tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
         
-        AryTasks(enRef) = Tsk.Text1
-        AryTasks(enlevel) = Tsk.Number1
-        AryTasks(enMileName) = Tsk.Name
-        AryTasks(enBaseFinish) = Format(Tsk.BaselineFinish, "dd mmm yy")
-        AryTasks(enForeFinish) = Format(Tsk.Finish, "dd mmm yy")
-        AryTasks(enDTI) = Tsk.Number13
-        AryTasks(enRAG) = Tsk.Text10
-        AryTasks(enIssue) = Tsk.Text14
-        AryTasks(enImpact) = Tsk.Text15
-        AryTasks(enAction) = Tsk.Text16
-        AryTasks(enProject) = Tsk.Text8
-        
-        If Tsk.Summary = False Then
-            MileName = Tsk.Text1
-            BLFinish = Format(Tsk.BaselineFinish, "dd mmm yy")
-            FCFinish = Format(Tsk.Finish, "dd mmm yy")
-            DTI = Tsk.Number13
-            LocalRAG = Tsk.Text10
-            CalcRAG = Tsk.Text22
-            PCComplete = Tsk.PercentComplete
-            
-            With ShtExceptRep
-                If PCComplete Then
-                    .EnterData AryTasks, Completed
+                AryTasks(enRef) = tsk.UniqueID
+                AryTasks(enlevel) = tsk.number1
+                AryTasks(enMileName) = tsk.Name
+                AryTasks(enBaseFinish) = Format(tsk.BaselineFinish, "dd mmm yy")
+                AryTasks(enForeFinish) = Format(tsk.finish, "dd mmm yy")
+                AryTasks(enDTI) = tsk.Number13
+                AryTasks(enRAG) = tsk.Text22
+                AryTasks(enLocalRAG) = tsk.Text10
+                AryTasks(enIssue) = tsk.Text14
+                AryTasks(enImpact) = tsk.Text15
+                AryTasks(enAction) = tsk.Text16
+                AryTasks(enProject) = tsk.Text8
                 
-                ElseIf LocalRAG = "AMBER" Then
-                    .EnterData AryTasks, Amber
-                
-                ElseIf LocalRAG = "RED" And BLFinish < Now Then
-                    .EnterData AryTasks, MissedRed
-                
-                ElseIf LocalRAG = "RED" And BLFinish >= Now Then
-                    .EnterData AryTasks, FutureRed
+                If tsk.Summary = False Then
+                    MileName = tsk.Text1
+                    BLFinish = Format(tsk.BaselineFinish, "dd mmm yy")
+                    FCFinish = Format(tsk.finish, "dd mmm yy")
+                    DTI = tsk.Number13
+                    LocalRAG = tsk.Text10
+                    CalcRAG = tsk.Text22
+                    PCComplete = tsk.PercentComplete
+                    
+                    With ShtExceptRep
+                        If PCComplete Then
+                            .EnterData AryTasks, Completed
+                        
+                        ElseIf LocalRAG = "AMBER" Then
+                            .EnterData AryTasks, Amber
+                        
+                        ElseIf LocalRAG = "RED" And BLFinish < Now Then
+                            .EnterData AryTasks, MissedRed
+                        
+                        ElseIf LocalRAG = "RED" And BLFinish >= Now Then
+                            .EnterData AryTasks, FutureRed
+                        End If
+                    End With
                 End If
-            End With
+                i = i + 1
+                Debug.Print i
+            End If
         End If
-        i = i + 1
-        Debug.Print i
     Next Tsk
-        
     ModLibrary.PerfSettingsOff
     
     MsgBox "Exception Report Created", vbOKOnly + vbInformation

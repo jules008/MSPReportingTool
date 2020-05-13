@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 4 May 20
+' Date - 13 May 20
 '===============================================================
 Option Explicit
 
@@ -27,14 +27,6 @@ Public Sub BtnImportClick()
     Me.Unprotect
     ModReports.DataImport
     Me.Protect
-End Sub
-
-' ===============================================================
-' BtnPPTExpClick
-' ---------------------------------------------------------------
-Public Sub BtnPPTExpClick()
-    ActionButtonClick Me.Shapes("BtnPPTExp")
-    CreatePowerPoint.CreatePowerPoint
 End Sub
 
 ' ===============================================================
@@ -58,7 +50,7 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnDepRepGenClick()
     ActionButtonClick Me.Shapes("BtnDepRepGen")
-    DepReport
+    ModReports.DependancyRep
 End Sub
 
 ' ===============================================================
@@ -66,28 +58,28 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub ActionButtonClick(Button As Shape)
     Dim DTime As Double
-    
+
     On Error GoTo ErrorHandler
-    
+
     If [mpp_filepath] = "" Then
         MsgBox "Please import a Project File", vbOKOnly + vbExclamation
         Exit Sub
     End If
-    
+
     FormatButton Button, True
-    
+
     DTime = Time
     Do While Time < DTime + 1 / 24 / 60 / 60 / 2
         DoEvents
     Loop
-    
+
     FormatButton Button, False
-        
-    
+
+
 Exit Sub
 ErrorHandler:
     MsgBox "An error has occured, unable to open the Project File", vbOKCancel + vbCritical
-    
+
 End Sub
 
 ' ===============================================================
@@ -95,7 +87,7 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLvl1Click()
     Me.Unprotect
-    [Level] = 1
+    [level] = 1
     FormatButton Me.Shapes("BtnLvl1"), True
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
@@ -109,7 +101,7 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLvl2Click()
     Me.Unprotect
-    [Level] = 2
+    [level] = 2
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), True
     FormatButton Me.Shapes("BtnLvl3"), False
@@ -123,7 +115,7 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLvl3Click()
     Me.Unprotect
-    [Level] = 3
+    [level] = 3
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), True
@@ -137,14 +129,14 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLvl4Click()
     Me.Unprotect
-    
-    [Level] = 4
+
+    [level] = 4
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), True
     FormatButton Me.Shapes("BtnLvlAll"), False
-    
+
     Me.Protect
 End Sub
 
@@ -153,14 +145,14 @@ End Sub
 ' ---------------------------------------------------------------
 Public Sub BtnLvlAllClick()
     Me.Unprotect
-    
-    [Level] = 9999
+
+    [level] = 9999
     FormatButton Me.Shapes("BtnLvl1"), False
     FormatButton Me.Shapes("BtnLvl2"), False
     FormatButton Me.Shapes("BtnLvl3"), False
     FormatButton Me.Shapes("BtnLvl4"), False
     FormatButton Me.Shapes("BtnLvlAll"), True
-    
+
     Me.Protect
 End Sub
 
@@ -177,13 +169,13 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
                 .ForeColor.RGB = COLOUR_2
                 .BackColor.RGB = COLOUR_2
             End With
-            
+
             With .Line
                 .ForeColor.RGB = COLOUR_4
                 .Weight = 0
                 If .Weight = 0 Then .Visible = msoFalse Else .Visible = msoCTrue
             End With
-            
+
             With .TextFrame
                 .Characters.Font.Bold = False
                 .Characters.Font.Name = "Abadi"
@@ -191,25 +183,25 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
                 .Characters.Font.Size = 10
                 .HorizontalAlignment = xlHAlignCenter
             End With
-            
+
             With .Shadow
                 .Visible = msoTrue
                 .Type = msoShadow30
             End With
-            
+
         Else
             With .Fill
                 .TwoColorGradient msoGradientHorizontal, 1
                 .ForeColor.RGB = COLOUR_8
                 .BackColor.RGB = COLOUR_8
             End With
-            
+
             With .Line
                 .ForeColor.RGB = COLOUR_2
                 .Weight = 0
                 If .Weight = 0 Then .Visible = msoFalse Else .Visible = msoCTrue
             End With
-            
+
             With .TextFrame
                 .Characters.Font.Bold = False
                 .Characters.Font.Name = "Abadi"
@@ -217,14 +209,14 @@ Private Sub FormatButton(Btn As Shape, OnState As Boolean)
                 .Characters.Font.Size = 10
                 .HorizontalAlignment = xlHAlignCenter
             End With
-            
+
             With .Shadow
                 .Visible = msoTrue
                 .Type = msoShadow30
                .Visible = msoFalse
             End With
-            
-        
+
+
         End If
     End With
     Me.Protect
@@ -236,16 +228,16 @@ End Sub
 ' ---------------------------------------------------------------
 Private Sub TxtLAValue_Change()
     Dim LAValue As Variant
-    
+
     Sleep 200
     LAValue = TxtLAValue
     If LAValue = "" Then Exit Sub
-    
+
     If Not IsNumeric(TxtLAValue) Then
         MsgBox "Please only enter numbers", vbOKOnly + vbExclamation, "Look Ahead Value"
         Exit Sub
     End If
-    
+
     If TxtLAValue < 1 Or TxtLAValue > 500 Then
         MsgBox "Please only enter number between 1 and 500", vbOKOnly + vbExclamation, "Look Ahead Value"
         Exit Sub

@@ -8,7 +8,7 @@ Attribute VB_Name = "ModProjectInOut"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 1 May 20
+' Date - 13 May 20
 '===============================================================
 
 Option Explicit
@@ -25,6 +25,8 @@ Public Sub ExportModules()
     Dim VBModule As VBIDE.VBComponent
    
     On Error Resume Next
+   
+   ThisWorkbook.ClearData
    
     SourceBookName = ActiveWorkbook.Name
     Set SourceBook = Application.Workbooks(SourceBookName)
