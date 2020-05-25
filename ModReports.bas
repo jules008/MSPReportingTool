@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 13 May 20
+' Date - 25 May 20
 '===============================================================
 Option Explicit
 
@@ -72,7 +72,7 @@ Public Sub LookAheadRep(ProjectPath As String)
     i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
         If Not Tsk Is Nothing And Tsk.Summary = False Then
-            If Tsk.Number1 <= PLevel And Tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
+            If Tsk.number1 <= PLevel And Tsk.BaselineFinish < DateAdd("ww", LookAhead, ObjMSProject.ActiveProject.StatusDate) Then
                 AryTasks(i, enRef) = tsk.UniqueID
                 AryTasks(i, enlevel) = Tsk.Number1
                 AryTasks(i, enMileName) = Tsk.Name
@@ -106,7 +106,7 @@ Exit Sub
 ErrorHandler:
     Debug.Print Err.Number & " - " & Err.Description
     ModLibrary.PerfSettingsOff
-    ObjMSProject.FileClose (False)
+    If Not ObjMSProject Is Nothing Then ObjMSProject.FileClose (False)
     Set ObjMSProject = Nothing
 End Sub
 
@@ -153,15 +153,16 @@ Public Sub DependancyRep()
     PLevel = ShtMain.Range("LEVEL")
     
     'cycle through tasks in plan and add to tasks array
-    ReDim AryTasks(1 To ObjMSProject.ActiveProject.Tasks.Count, 1 To 15)
+    ReDim AryTasks(1 To ObjMSProject.ActiveProject.Tasks.Count, 1 To 13)
     
     i = 1
     For Each tsk In ObjMSProject.ActiveProject.Tasks
         If Not tsk Is Nothing And tsk.Summary = False Then
-            If tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
+            If Tsk.BaselineFinish < DateAdd("ww", LookAhead, ObjMSProject.ActiveProject.StatusDate) Then
                 Select Case tsk.number1
                     Case 10, 5, 11
                         AryTasks(i, enDLRef) = tsk.UniqueID
+                        AryTasks(i, enDLProject) = Tsk.Text8
                         AryTasks(i, enDLMileName) = tsk.Name
                         AryTasks(i, enDLLevel) = tsk.number1
                         AryTasks(i, enDLBenef) = tsk.Text20
@@ -173,10 +174,7 @@ Public Sub DependancyRep()
                         AryTasks(i, enDLIssue) = tsk.Text14
                         AryTasks(i, enDLImpact) = tsk.Text15
                         AryTasks(i, enDLAction) = tsk.Text16
-                        AryTasks(i, enDLProject) = tsk.Text8
                         
-                        If tsk.flag18 = True Then AryTasks(i, enDLDepIn) = 1 Else AryTasks(i, enDLDepIn) = 0
-                        If tsk.flag19 = True Then AryTasks(i, enDLDepOut) = 1 Else AryTasks(i, enDLDepOut) = 0
                         i = i + 1
                 End Select
             End If
@@ -337,7 +335,13 @@ Public Sub WriteTask(AryTask() As Variant, ProjName As String)
     
     For y = LBound(AryTask) To UBound(AryTask)
         WSheet.Range("A1").Offset(x, y) = AryTask(y)
-    Next y
+        
+        With WSheet.Range("A1").Offset(x, y).Borders
+            .Weight = 2
+            .ColorIndex = 1
+            .LineStyle = xlContinuous
+        End With
+   Next y
         
     Set WSheet = Nothing
 End Sub
@@ -508,9 +512,10 @@ Public Sub ExceptionReport()
     i = 1
     For Each Tsk In ObjMSProject.ActiveProject.Tasks
         If Not tsk Is Nothing And tsk.Summary = False Then
-            If tsk.number1 <= PLevel And tsk.BaselineFinish < DateAdd("ww", LookAhead, Now) Then
+            If Tsk.number1 <= PLevel And Tsk.BaselineFinish < DateAdd("ww", LookAhead, ObjMSProject.ActiveProject.StatusDate) Then
         
                 AryTasks(enRef) = tsk.UniqueID
+                AryTasks(enProject) = Tsk.Text8
                 AryTasks(enlevel) = tsk.number1
                 AryTasks(enMileName) = tsk.Name
                 AryTasks(enBaseFinish) = Format(tsk.BaselineFinish, "dd mmm yy")
@@ -521,7 +526,6 @@ Public Sub ExceptionReport()
                 AryTasks(enIssue) = tsk.Text14
                 AryTasks(enImpact) = tsk.Text15
                 AryTasks(enAction) = tsk.Text16
-                AryTasks(enProject) = tsk.Text8
                 
                 If tsk.Summary = False Then
                     MileName = tsk.Text1
@@ -539,10 +543,10 @@ Public Sub ExceptionReport()
                         ElseIf LocalRAG = "AMBER" Then
                             .EnterData AryTasks, Amber
                         
-                        ElseIf LocalRAG = "RED" And BLFinish < Now Then
+                        ElseIf LocalRAG = "RED" And BLFinish < ActiveProject.StatusDate Then
                             .EnterData AryTasks, MissedRed
                         
-                        ElseIf LocalRAG = "RED" And BLFinish >= Now Then
+                        ElseIf LocalRAG = "RED" And BLFinish >= ActiveProject.StatusDate Then
                             .EnterData AryTasks, FutureRed
                         End If
                     End With

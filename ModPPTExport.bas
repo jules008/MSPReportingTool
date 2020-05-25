@@ -9,7 +9,7 @@ Attribute VB_Name = "ModPPTExport"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 13 May 20
+' Date - 25 May 20
 '===============================================================
 Option Explicit
 
@@ -69,6 +69,7 @@ Public Sub GetSlideRange()
     Dim RepSheet As Worksheet
     Dim RngPrint As Range
     Dim RngReport As Range
+    Dim RngHeading As Range
     Dim Title As String
     Dim x As Integer
     Dim NoCols As Integer
@@ -89,7 +90,8 @@ Public Sub GetSlideRange()
                 x = 1
                 Do While x < RngReport.Rows.Count
                     With RngReport
-                        Set RngPrint = .Range(.Cells(x, 1), .Cells(x + 15, NoCols))
+                        Set RngPrint = .Range(.Cells(x, 1), .Cells(x + 20, NoCols))
+                        Set RngHeading = .Range("B2:L2")
                     End With
                     Debug.Print RngPrint.Address
                     
@@ -97,7 +99,7 @@ Public Sub GetSlideRange()
                     Title = RepSheet.Range("A1")
                     
                     If Application.WorksheetFunction.CountA(RngPrint) > 0 Then
-                        CreatePPTSlide RngPrint, Title
+                        CreatePPTSlide RngHeading, Title
                     End If
                     
                     x = x + 16

@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 13 May 20
+' Date - 25 May 20
 '===============================================================
 Option Explicit
 
@@ -33,6 +33,12 @@ Public Sub DisplayTasks(AryTasks() As String)
     For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
         For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)
             Me.Range("B3").Offset(x, y) = AryTasks(x, y)
+            
+            With Me.Range("B3").Offset(x, y).Borders(xlEdgeBottom)
+                .Weight = 1
+                .ColorIndex = 3
+                
+            End With
         Next y
     Next x
     
