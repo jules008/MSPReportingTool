@@ -9,7 +9,7 @@ Attribute VB_Name = "ModPPTExport"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 13 May 20
+' Date - 26 May 20
 '===============================================================
 Option Explicit
 
@@ -69,49 +69,68 @@ Public Sub GetSlideRange()
     Dim RepSheet As Worksheet
     Dim RngPrint As Range
     Dim RngReport As Range
+    Dim RngHeading As Range
     Dim Title As String
     Dim x As Integer
     Dim NoCols As Integer
+    Dim ShtTemp As Worksheet
     
     On Error GoTo ErrorHandler
     
+    
     For Each RepSheet In Worksheets
+    
         Select Case RepSheet.Name
-            
+                  
             Case ShtMain.Name, ShtTaskView.Name, ShtPlanData.Name
             
             Case Else
-        
-                Set RngReport = RepSheet.UsedRange
+    
+                RepSheet.Copy After:=Worksheets(Worksheets.Count)
+                ActiveSheet.Name = "TempSht"
+                
+                Set RngReport = ActiveSheet.UsedRange
+                
                 NoCols = RngReport.Columns.Count
                 
-                Debug.Print RngReport.Address
                 x = 1
-                Do While x < RngReport.Rows.Count
+                Do While Application.WorksheetFunction.CountA(RngReport.Range("A:A")) > 2
                     With RngReport
-                        Set RngPrint = .Range(.Cells(x, 1), .Cells(x + 15, NoCols))
+                        Set RngPrint = .Range(.Cells(2, 1), .Cells(16, NoCols))
                     End With
                     Debug.Print RngPrint.Address
                     
-                    RngPrint.Copy
                     Title = RepSheet.Range("A1")
+                    RngPrint.Copy
                     
                     If Application.WorksheetFunction.CountA(RngPrint) > 0 Then
-                        CreatePPTSlide RngPrint, Title
+                        CreatePPTSlide RngHeading, Title
                     End If
                     
-                    x = x + 16
+                    With RngReport
+                        .Range(.Cells(3, 1), .Cells(3 + 13, NoCols)).Delete Shift:=xlShiftUp
+                    End With
+                    
+                    
+                    x = x + 15
+                    
                 Loop
-                                
+                Application.DisplayAlerts = False
+                Worksheets("TempSht").Delete
+                Application.DisplayAlerts = True
         End Select
-    
+        
+                                
     Next
+    Set ShtTemp = Nothing
     Set RepSheet = Nothing
     Set RngReport = Nothing
     Set RngPrint = Nothing
 Exit Sub
 
 ErrorHandler:
+    
+    Application.DisplayAlerts = True
     
     Set RepSheet = Nothing
     Set RngReport = Nothing
