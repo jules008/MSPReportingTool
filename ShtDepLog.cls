@@ -16,7 +16,7 @@ Attribute VB_Exposed = True
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 25 May 20
+' Date - 26 May 20
 '===============================================================
 Option Explicit
 
@@ -32,30 +32,31 @@ Public Sub DisplayTasks(AryTasks() As Variant)
     
     For x = LBound(AryTasks, 1) To UBound(AryTasks, 1)
         For y = LBound(AryTasks, 2) To UBound(AryTasks, 2)
-            Me.Range("A2").Offset(x, y) = AryTasks(x, y)
-            
-            With Me.Range("A2").Offset(x, y).Borders
+            Me.Range("A2").Offset(x, y - 1) = AryTasks(x, y)
+        
+            With Me.Range("A2").Offset(x, y - 1).Borders
                 .Weight = 2
                 .ColorIndex = 1
                 .LineStyle = xlContinuous
             End With
+       
        Next y
     Next x
     
     Range("A1") = "Dependency Log"
+    Range("A2") = "Ref"
     Range("B2") = "Project"
-    Range("C2") = "Ref"
-    Range("D2") = "Milestone Name"
-    Range("E2") = "Level"
-    Range("F2") = "Beneficiary"
-    Range("G2") = "Donor"
-    Range("H2") = "Baseline Finish"
-    Range("I2") = "Forecast Finish"
-    Range("J2") = "RAG"
-    Range("K2") = "Last RAG"
-    Range("L2") = "Issue"
-    Range("M2") = "Impact"
-    Range("N2") = "Action"
+    Range("C2") = "Milestone Name"
+    Range("D2") = "Level"
+    Range("E2") = "Beneficiary"
+    Range("F2") = "Donor"
+    Range("G2") = "Baseline Finish"
+    Range("H2") = "Forecast Finish"
+    Range("I2") = "RAG"
+    Range("J2") = "Last RAG"
+    Range("K2") = "Issue"
+    Range("L2") = "Impact"
+    Range("M2") = "Action"
     
 End Sub
 
@@ -64,7 +65,7 @@ End Sub
 ' Clears page
 ' ---------------------------------------------------------------
 Public Sub ClearTasks()
-    With Range("B3:N10000")
+    With Range("A3:N10000")
         .ClearContents
         .Borders.LineStyle = xlNone
     End With

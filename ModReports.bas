@@ -9,7 +9,7 @@ Attribute VB_Name = "ModReports"
 '===============================================================
 ' v1.0.0 - Initial Version
 '---------------------------------------------------------------
-' Date - 25 May 20
+' Date - 26 May 20
 '===============================================================
 Option Explicit
 
@@ -120,10 +120,11 @@ Public Sub DependancyRep()
     Dim ProgName As String
     Dim ProjName As String
     Dim AryTasks() As Variant
+    Dim AryOP() As Variant
     Dim PLevel As Integer
     Dim LookAhead As Integer
     Dim tsk As Task
-    Dim i As Integer
+    Dim i, x, y As Integer
     
     On Error GoTo ErrorHandler:
     
@@ -180,8 +181,16 @@ Public Sub DependancyRep()
             End If
         End If
     Next tsk
-        
-    ShtDepLog.DisplayTasks AryTasks
+    
+    ReDim AryOP(1 To i - 1, 1 To 13)
+    
+    For x = LBound(AryOP, 1) To UBound(AryOP, 1)
+        For y = LBound(AryOP, 2) To UBound(AryOP, 2)
+            AryOP(x, y) = AryTasks(x, y)
+        Next
+    Next
+    
+    ShtDepLog.DisplayTasks AryOP
     
     ModLibrary.PerfSettingsOff
     
@@ -222,31 +231,30 @@ Public Sub AddProjSheets(ProjName As String)
 '        ActiveSheet
         With Worksheets(ProjName)
             .Range("A1") = "Milestone Report - " & ProjName
-            .Range("B2") = "Ref"
-            .Range("C2") = "Level"
-            .Range("D2") = "Milestone Name"
-            .Range("E2") = "Baseline Finish"
-            .Range("F2") = "Forecast Finish"
-            .Range("G2") = "DTI"
-            .Range("H2") = "RAG"
-            .Range("I2") = "Local RAG"
-            .Range("J2") = "Issue"
-            .Range("K2") = "Impact"
-            .Range("L2") = "Action"
+            .Range("A2") = "Ref"
+            .Range("B2") = "Level"
+            .Range("C2") = "Milestone Name"
+            .Range("D2") = "Baseline Finish"
+            .Range("E2") = "Forecast Finish"
+            .Range("F2") = "DTI"
+            .Range("G2") = "RAG"
+            .Range("H2") = "Local RAG"
+            .Range("I2") = "Issue"
+            .Range("J2") = "Impact"
+            .Range("K2") = "Action"
             
-            .Columns(1).ColumnWidth = 10
+            .Columns(1).ColumnWidth = 5
             .Columns(2).ColumnWidth = 5
-            .Columns(3).ColumnWidth = 5
-            .Columns(4).ColumnWidth = 40
+            .Columns(3).ColumnWidth = 40
+            .Columns(4).ColumnWidth = 15
             .Columns(5).ColumnWidth = 15
             .Columns(6).ColumnWidth = 15
-            .Columns(7).ColumnWidth = 15
+            .Columns(7).ColumnWidth = 10
             .Columns(8).ColumnWidth = 10
             .Columns(9).ColumnWidth = 10
             .Columns(10).ColumnWidth = 10
             .Columns(11).ColumnWidth = 10
-            .Columns(12).ColumnWidth = 10
-            .Columns(13).Hidden = True
+            .Columns(12).Hidden = True
             With ShtMain
                 ShtMain.Unprotect
                 .Range("NO_PROJS") = .Range("NO_PROJS") + 1
@@ -334,9 +342,9 @@ Public Sub WriteTask(AryTask() As Variant, ProjName As String)
     x = Application.WorksheetFunction.CountA(WSheet.Range("B:B")) + 1
     
     For y = LBound(AryTask) To UBound(AryTask)
-        WSheet.Range("A1").Offset(x, y) = AryTask(y)
+        WSheet.Range("A1").Offset(x, y - 1) = AryTask(y)
         
-        With WSheet.Range("A1").Offset(x, y).Borders
+        With WSheet.Range("A1").Offset(x, y - 1).Borders
             .Weight = 2
             .ColorIndex = 1
             .LineStyle = xlContinuous
